@@ -116,6 +116,15 @@ body{font-family:'Segoe UI',Tahoma,sans-serif;background:#f0f2f5;min-height:100v
 .confirm-btns{display:flex;justify-content:flex-end;gap:8px}
 .btn-cancel{background:#fff;border:1.5px solid #e5e7eb;border-radius:8px;padding:8px 20px;font-size:.85rem;cursor:pointer;font-family:inherit;color:#374151}
 .btn-cancel:hover{border-color:#9ca3af}
+/* Pagination */
+.pg-wrap{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:#f9fafb;border-top:1px solid #f3f4f6}
+.pg-info{font-size:.75rem;color:#6b7280}
+.pg-btns{display:flex;gap:4px;align-items:center}
+.pg-btn{border:1.5px solid #e5e7eb;background:#fff;border-radius:6px;padding:4px 10px;font-size:.78rem;cursor:pointer;color:#374151;font-family:inherit;transition:all .15s;min-width:32px;text-align:center}
+.pg-btn:hover:not(:disabled){border-color:#0078d4;color:#0078d4}
+.pg-btn.active{background:#0078d4;border-color:#0078d4;color:#fff;font-weight:700}
+.pg-btn:disabled{opacity:.4;cursor:not-allowed}
+.pg-ellipsis{font-size:.82rem;color:#9ca3af;padding:0 4px}
 /* Loading */
 #loading{display:none;position:fixed;inset:0;background:rgba(255,255,255,.7);align-items:center;justify-content:center;z-index:999;backdrop-filter:blur(2px)}
 #loading.show{display:flex}
@@ -152,7 +161,7 @@ body{font-family:'Segoe UI',Tahoma,sans-serif;background:#f0f2f5;min-height:100v
   </div>
 
   <div class="filter-bar">
-    <select id="filter-sys" onchange="renderAll()">
+    <select id="filter-sys" onchange="resetPages();renderAll()">
       <option value="">전체 시스템</option>
       <option value="IT">IT Ticket</option>
       <option value="SCC">STK Contract</option>
@@ -162,7 +171,7 @@ body{font-family:'Segoe UI',Tahoma,sans-serif;background:#f0f2f5;min-height:100v
       <option value="MC">Mobility Car</option>
       <option value="RR">Repair Report</option>
     </select>
-    <select id="filter-status" onchange="renderAll()">
+    <select id="filter-status" onchange="resetPages();renderAll()">
       <option value="대기">대기 중</option>
       <option value="">전체</option>
       <option value="승인">승인</option>
@@ -224,6 +233,8 @@ const SYSTEMS=[
 ];
 
 let msalApp=null,user=null,siteId=null,_allData={},_pending=null;
+const PAGE_SIZE=20;
+let _pages={}; // sysKey -> current page (0-based)
 
 window.addEventListener('load',async()=>{
   const btn=document.getElementById('btn-login');
@@ -312,6 +323,9 @@ function stBadge(st){
   return`<span class="${map[st]||'st-대기잠김'}">${st||'대기'}</span>`;
 }
 
+function resetPages(){_pages={};}
+function goPage(sysKey,p){_pages[sysKey]=p;renderAll();}
+
 function renderAll(){
   const fSys=document.getElementById('filter-sys').value;
   const fSt=document.getElementById('filter-status').value;
@@ -334,9 +348,15 @@ function renderAll(){
 
     if(!mine.length){html+=card(sys,`<div class="sys-empty">${fSt==='대기'?'결재 대기 항목이 없습니다 ✓':'항목이 없습니다'}</div>`,0);continue;}
 
-    // 컬럼 너비 고정 (모든 시스템 동일)
+    // 페이지네이션
+    const totalItems=mine.length;
+    const totalPages=Math.max(1,Math.ceil(totalItems/PAGE_SIZE));
+    const curPage=Math.min(_pages[sys.key]||0, totalPages-1);
+    _pages[sys.key]=curPage;
+    const pageItems=mine.slice(curPage*PAGE_SIZE,(curPage+1)*PAGE_SIZE);
+
     let rows='';
-    mine.forEach(item=>{
+    pageItems.forEach(item=>{
       const f=item.fields,rf=d.reqMap[String(f.RequestID)]||{};
       const isPending=(f.Status||'').trim()==='대기';
       rows+=`<tr onclick="showDetail('${sys.key}',${f.RequestID})">
@@ -355,6 +375,22 @@ function renderAll(){
       </tr>`;
     });
 
+    // 페이지네이션 버튼 생성
+    let pgHtml='';
+    if(totalPages>1){
+      const start=curPage*PAGE_SIZE+1, end=Math.min((curPage+1)*PAGE_SIZE,totalItems);
+      let btns=`<button class="pg-btn" onclick="goPage('${sys.key}',${curPage-1})" ${curPage===0?'disabled':''}>‹</button>`;
+      for(let p=0;p<totalPages;p++){
+        if(totalPages>7&&p>0&&p<totalPages-1&&Math.abs(p-curPage)>2){
+          if(p===curPage-3||p===curPage+3)btns+=`<span class="pg-ellipsis">…</span>`;
+          continue;
+        }
+        btns+=`<button class="pg-btn${p===curPage?' active':''}" onclick="goPage('${sys.key}',${p})">${p+1}</button>`;
+      }
+      btns+=`<button class="pg-btn" onclick="goPage('${sys.key}',${curPage+1})" ${curPage===totalPages-1?'disabled':''}>›</button>`;
+      pgHtml=`<div class="pg-wrap"><span class="pg-info">${start}–${end} / 전체 ${totalItems}건</span><div class="pg-btns">${btns}</div></div>`;
+    }
+
     html+=card(sys,
       `<table class="appr-table">
         <thead><tr>
@@ -367,7 +403,7 @@ function renderAll(){
         </tr></thead>
         <tbody>${rows}</tbody>
       </table>
-      <div class="summary-row">${mine.length}건</div>`,
+      ${pgHtml||`<div class="summary-row">전체 ${totalItems}건</div>`}`,
       mine.length);
   }
 
