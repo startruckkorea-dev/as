@@ -7,137 +7,171 @@
 <script src="https://cdn.jsdelivr.net/npm/@azure/msal-browser@3.28.0/lib/msal-browser.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',Tahoma,sans-serif;background:#f0f2f5;min-height:100vh;color:#1a1a2e}
-/* Login */
-#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,#0078d4 0%,#005a9e 100%)}
-.login-card{background:#fff;border-radius:16px;padding:48px 52px;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,.18);max-width:400px;width:100%}
-.login-logo{font-size:3rem;margin-bottom:16px}
-.login-title{font-size:1.3rem;font-weight:700;color:#1a1a2e;margin-bottom:6px}
-.login-sub{font-size:.82rem;color:#6b7280;margin-bottom:32px}
-.btn-login{background:#0078d4;color:#fff;border:none;border-radius:8px;padding:12px 0;font-size:.95rem;font-weight:600;cursor:pointer;width:100%;font-family:inherit;transition:background .15s}
-.btn-login:hover{background:#106ebe}
-.btn-login:disabled{background:#c8c6c4;cursor:not-allowed}
-#login-err{color:#dc2626;font-size:.78rem;margin-top:10px;display:none}
-/* App */
-#app{display:none;max-width:1040px;margin:0 auto;padding:24px 16px 60px}
-/* Header */
-.header{background:#fff;border-radius:12px;padding:16px 24px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 1px 6px rgba(0,0,0,.07)}
-.header-brand{display:flex;align-items:center;gap:10px}
-.header-icon{font-size:1.5rem}
-.header-title{font-size:1.05rem;font-weight:700;color:#1a1a2e}
-.header-sub{font-size:.72rem;color:#6b7280;margin-top:2px}
-.user-row{display:flex;align-items:center;gap:10px}
-.user-name{font-size:.82rem;color:#4b5563;font-weight:500}
-#btn-logout{background:#fff;border:1.5px solid #e5e7eb;border-radius:6px;padding:5px 14px;font-size:.78rem;cursor:pointer;color:#4b5563;font-family:inherit;transition:all .15s}
-#btn-logout:hover{border-color:#0078d4;color:#0078d4}
-/* Filter bar */
-.filter-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
-.filter-bar select{border:1.5px solid #e5e7eb;border-radius:8px;padding:7px 12px;font-size:.82rem;font-family:inherit;background:#fff;color:#374151;cursor:pointer;transition:border .15s}
-.filter-bar select:focus{outline:none;border-color:#0078d4}
-.summary-badge{background:#0078d4;color:#fff;border-radius:20px;padding:4px 14px;font-size:.78rem;font-weight:600;margin-left:auto}
-.btn-refresh{background:#fff;border:1.5px solid #e5e7eb;border-radius:8px;padding:7px 16px;font-size:.82rem;cursor:pointer;font-family:inherit;color:#374151;display:flex;align-items:center;gap:5px;transition:all .15s}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0f4f8;min-height:100vh;color:#1a202c}
+
+/* ── Login ── */
+#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,#0f2744 0%,#0078d4 60%,#00bcf2 100%)}
+.login-card{background:rgba(255,255,255,.97);border-radius:20px;padding:52px 56px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.22);max-width:420px;width:100%}
+.login-logo{width:64px;height:64px;background:linear-gradient(135deg,#0078d4,#00bcf2);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto 20px}
+.login-title{font-size:1.4rem;font-weight:700;color:#0f2744;margin-bottom:4px}
+.login-sub{font-size:.83rem;color:#718096;margin-bottom:36px}
+.btn-login{background:linear-gradient(135deg,#0078d4,#005a9e);color:#fff;border:none;border-radius:10px;padding:13px 0;font-size:.95rem;font-weight:600;cursor:pointer;width:100%;font-family:inherit;transition:all .2s;letter-spacing:.2px}
+.btn-login:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,120,212,.4)}
+.btn-login:disabled{background:#c8c6c4;cursor:not-allowed;transform:none;box-shadow:none}
+#login-err{color:#e53e3e;font-size:.78rem;margin-top:12px;display:none}
+
+/* ── App Shell ── */
+#app{display:none;min-height:100vh}
+
+/* ── Top Nav ── */
+.topnav{background:linear-gradient(135deg,#0f2744 0%,#0078d4 100%);padding:0 32px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.15)}
+.nav-brand{display:flex;align-items:center;gap:12px}
+.nav-icon{width:32px;height:32px;background:rgba(255,255,255,.2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem}
+.nav-title{font-size:1rem;font-weight:700;color:#fff;letter-spacing:.2px}
+.nav-sub{font-size:.7rem;color:rgba(255,255,255,.65);margin-top:1px}
+.nav-right{display:flex;align-items:center;gap:12px}
+.nav-user{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border-radius:8px;padding:6px 12px}
+.nav-user-avatar{width:26px;height:26px;background:rgba(255,255,255,.3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:#fff}
+.nav-user-name{font-size:.78rem;color:rgba(255,255,255,.9);font-weight:500}
+.btn-signout{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:7px;padding:5px 12px;font-size:.75rem;color:rgba(255,255,255,.85);cursor:pointer;font-family:inherit;transition:all .15s}
+.btn-signout:hover{background:rgba(255,255,255,.22)}
+
+/* ── Page body ── */
+.page{max-width:1400px;margin:0 auto;padding:28px 28px 60px}
+
+/* ── Summary strip ── */
+.summary-strip{display:flex;align-items:center;gap:10px;margin-bottom:22px;flex-wrap:wrap}
+.strip-title{font-size:1.1rem;font-weight:700;color:#1a202c;margin-right:4px}
+.strip-total{background:#0078d4;color:#fff;border-radius:20px;padding:4px 14px;font-size:.8rem;font-weight:700}
+.strip-spacer{flex:1}
+.strip-actions{display:flex;gap:8px;align-items:center}
+.btn-history{display:flex;align-items:center;gap:6px;background:#fff;border:1.5px solid #e2e8f0;border-radius:9px;padding:7px 16px;font-size:.8rem;font-weight:600;color:#4a5568;cursor:pointer;font-family:inherit;text-decoration:none;transition:all .15s}
+.btn-history:hover{border-color:#0078d4;color:#0078d4;background:#f0f8ff}
+.btn-history svg{opacity:.6}
+.btn-refresh{display:flex;align-items:center;gap:6px;background:#fff;border:1.5px solid #e2e8f0;border-radius:9px;padding:7px 16px;font-size:.8rem;font-weight:600;color:#4a5568;cursor:pointer;font-family:inherit;transition:all .15s}
 .btn-refresh:hover{border-color:#0078d4;color:#0078d4}
-/* System card grid */
-#content{display:grid;grid-template-columns:repeat(auto-fill,minmax(480px,1fr));gap:14px}
-.sys-card{background:#fff;border-radius:12px;box-shadow:0 1px 6px rgba(0,0,0,.06);overflow:hidden;display:flex;flex-direction:column}
-.sys-card-header{padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1.5px solid #f3f4f6}
+
+/* ── Filter bar ── */
+.filter-row{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;align-items:center}
+.filter-select{border:1.5px solid #e2e8f0;border-radius:9px;padding:7px 14px;font-size:.82rem;font-family:inherit;background:#fff;color:#2d3748;cursor:pointer;transition:border .15s;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23718096'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+.filter-select:focus{outline:none;border-color:#0078d4}
+
+/* ── Cards grid ── */
+#content{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+
+/* ── System card ── */
+.sys-card{background:#fff;border-radius:14px;box-shadow:0 1px 4px rgba(0,0,0,.07),0 4px 16px rgba(0,0,0,.04);overflow:hidden;display:flex;flex-direction:column;transition:box-shadow .15s}
+.sys-card:hover{box-shadow:0 4px 12px rgba(0,0,0,.1),0 8px 24px rgba(0,0,0,.06)}
+.sys-card-header{padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #f0f4f8}
 .sys-card-left{display:flex;align-items:center;gap:9px}
-.sys-badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:.68rem;font-weight:700;letter-spacing:.3px}
+.sys-badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:6px;font-size:.65rem;font-weight:800;letter-spacing:.4px}
 .sys-IT{background:#dbeafe;color:#1d4ed8}.sys-SCC{background:#dcfce7;color:#15803d}
-.sys-GW{background:#fef3c7;color:#b45309}.sys-BP{background:#f3e8ff;color:#7c3aed}
+.sys-GW{background:#fef3c7;color:#b45309}.sys-BP{background:#ede9fe;color:#6d28d9}
 .sys-FA{background:#fce7f3;color:#be185d}.sys-MC{background:#d1fae5;color:#065f46}
 .sys-RR{background:#fee2e2;color:#b91c1c}
-.sys-name{font-size:.9rem;font-weight:700;color:#1a1a2e}
-.sys-cnt{background:#ef4444;color:#fff;border-radius:20px;padding:2px 9px;font-size:.68rem;font-weight:700}
-.sys-link{font-size:.72rem;color:#0078d4;text-decoration:none;padding:4px 10px;border:1px solid #bfdbfe;border-radius:6px;transition:all .15s}
-.sys-link:hover{background:#dbeafe}
-/* Empty */
-.sys-empty{padding:18px 20px;color:#9ca3af;font-size:.82rem}
-/* Table */
+.sys-name{font-size:.88rem;font-weight:700;color:#1a202c}
+.sys-cnt{background:#ef4444;color:#fff;border-radius:20px;padding:2px 8px;font-size:.65rem;font-weight:700}
+.sys-link{font-size:.72rem;color:#0078d4;text-decoration:none;padding:4px 10px;border:1px solid #bfdbfe;border-radius:7px;transition:all .15s;font-weight:600}
+.sys-link:hover{background:#eff6ff}
+
+/* ── Empty ── */
+.sys-empty{padding:22px 18px;color:#a0aec0;font-size:.8rem;display:flex;align-items:center;gap:6px}
+
+/* ── Compact table ── */
 .appr-table{width:100%;border-collapse:collapse}
-.appr-table th{padding:7px 12px;text-align:left;background:#f9fafb;border-bottom:1.5px solid #f3f4f6;font-size:.68rem;font-weight:700;color:#6b7280;letter-spacing:.3px;text-transform:uppercase}
-.appr-table td{padding:8px 12px;border-bottom:1px solid #f3f4f6;font-size:.78rem;color:#374151;vertical-align:middle}
+.appr-table th{padding:6px 10px;text-align:left;background:#f8fafc;border-bottom:1.5px solid #edf2f7;font-size:.63rem;font-weight:700;color:#718096;letter-spacing:.4px;text-transform:uppercase}
+.appr-table td{padding:9px 10px;border-bottom:1px solid #f0f4f8;font-size:.77rem;color:#2d3748;vertical-align:middle}
 .appr-table tbody tr:last-child td{border-bottom:none}
-.appr-table tbody tr:hover td{background:#f9fafb}
-.appr-table tbody tr{cursor:pointer;transition:background .1s}
-/* Status badges */
-.st-대기{display:inline-block;background:#fef9c3;color:#854d0e;border-radius:20px;padding:3px 10px;font-size:.7rem;font-weight:600}
-.st-승인{display:inline-block;background:#dcfce7;color:#166534;border-radius:20px;padding:3px 10px;font-size:.7rem;font-weight:600}
-.st-반려{display:inline-block;background:#fee2e2;color:#991b1b;border-radius:20px;padding:3px 10px;font-size:.7rem;font-weight:600}
-.st-대기잠김{display:inline-block;background:#f3f4f6;color:#6b7280;border-radius:20px;padding:3px 10px;font-size:.7rem;font-weight:600}
-/* Action buttons */
-.action-cell{display:flex;gap:6px;justify-content:flex-end;white-space:nowrap}
-.btn-approve{background:#16a34a;color:#fff;border:none;border-radius:6px;padding:5px 14px;font-size:.78rem;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s}
-.btn-approve:hover{background:#15803d}
-.btn-reject{background:#dc2626;color:#fff;border:none;border-radius:6px;padding:5px 14px;font-size:.78rem;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s}
-.btn-reject:hover{background:#b91c1c}
-.done-label{font-size:.72rem;color:#9ca3af;font-style:italic}
-/* No. column */
-.req-no{color:#0078d4;font-weight:700;font-size:.85rem}
-/* Summary row */
-.summary-row{font-size:.75rem;color:#6b7280;padding:7px 14px;background:#f9fafb;border-top:1px solid #f3f4f6;text-align:right}
-/* All done */
-.all-done{text-align:center;padding:72px 20px;background:#fff;border-radius:12px;box-shadow:0 1px 6px rgba(0,0,0,.06)}
-.all-done .icon{font-size:3rem;margin-bottom:14px}
-.all-done .msg{font-size:1rem;font-weight:700;color:#1a1a2e;margin-bottom:6px}
-.all-done .sub{font-size:.82rem;color:#9ca3af}
-/* Detail Modal */
-#detail-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:flex-start;justify-content:center;padding:40px 16px;overflow-y:auto}
-#detail-modal.open{display:flex}
-.modal-box{background:#fff;border-radius:14px;width:640px;max-width:100%;padding:28px 32px;position:relative;box-shadow:0 8px 40px rgba(0,0,0,.18)}
-.modal-close{position:absolute;top:16px;right:20px;background:none;border:none;font-size:1.3rem;cursor:pointer;color:#9ca3af;line-height:1}
-.modal-close:hover{color:#374151}
-.modal-sys-badge{display:inline-flex;align-items:center;gap:6px;margin-bottom:14px}
-.modal-title{font-size:1.05rem;font-weight:700;color:#1a1a2e;margin-bottom:18px;padding-bottom:14px;border-bottom:1.5px solid #f3f4f6}
-.modal-sec{margin:16px 0 10px;font-size:.72rem;font-weight:700;color:#0078d4;text-transform:uppercase;letter-spacing:.5px;padding:5px 10px;background:#eff6ff;border-left:3px solid #0078d4;border-radius:4px}
-.modal-row{display:flex;padding:7px 0;border-bottom:1px solid #f9fafb;font-size:.82rem}
-.modal-row:last-child{border-bottom:none}
-.modal-label{color:#6b7280;width:140px;flex-shrink:0;font-size:.75rem;font-weight:500}
-.modal-val{color:#1a1a2e;font-weight:500;flex:1;line-height:1.5}
-/* Approval history */
-.appr-history{background:#f9fafb;border-radius:8px;border:1.5px solid #f3f4f6;overflow:hidden;margin-top:4px}
-.appr-item{display:flex;justify-content:space-between;align-items:flex-start;padding:11px 14px;border-bottom:1px solid #f3f4f6}
-.appr-item:last-child{border-bottom:none}
-.appr-order{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:#0078d4;color:#fff;border-radius:50%;font-size:.65rem;font-weight:700;flex-shrink:0;margin-right:8px;margin-top:1px}
-.appr-info{flex:1}
-.appr-role{font-size:.78rem;font-weight:700;color:#1a1a2e}
-.appr-person{font-size:.72rem;color:#6b7280;margin-top:2px}
-.appr-date{font-size:.7rem;color:#9ca3af;margin-top:2px}
-.appr-comment{margin-top:5px;font-size:.72rem;background:#fff;border:1px solid #e5e7eb;border-radius:5px;padding:4px 8px;color:#4b5563}
-.modal-action{display:flex;gap:10px;margin-top:20px}
-.modal-action .btn-approve,.modal-action .btn-reject{flex:1;padding:11px;font-size:.9rem;border-radius:8px}
-/* Confirm */
-#confirm-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:600;align-items:center;justify-content:center}
-#confirm-modal.open{display:flex}
-.confirm-box{background:#fff;border-radius:14px;padding:28px 28px 22px;max-width:440px;width:92%;box-shadow:0 8px 40px rgba(0,0,0,.2)}
-.confirm-title{font-size:1rem;font-weight:700;color:#1a1a2e;margin-bottom:6px}
-.confirm-sub{font-size:.8rem;color:#6b7280;margin-bottom:14px}
-.confirm-comment{width:100%;border:1.5px solid #e5e7eb;border-radius:8px;padding:9px 12px;font-size:.82rem;font-family:inherit;resize:vertical;margin-bottom:16px;transition:border .15s}
-.confirm-comment:focus{outline:none;border-color:#0078d4}
-.confirm-btns{display:flex;justify-content:flex-end;gap:8px}
-.btn-cancel{background:#fff;border:1.5px solid #e5e7eb;border-radius:8px;padding:8px 20px;font-size:.85rem;cursor:pointer;font-family:inherit;color:#374151}
-.btn-cancel:hover{border-color:#9ca3af}
-/* Pagination */
-.pg-wrap{display:flex;align-items:center;justify-content:space-between;padding:7px 14px;background:#f9fafb;border-top:1px solid #f3f4f6}
-.pg-info{font-size:.75rem;color:#6b7280}
-.pg-btns{display:flex;gap:4px;align-items:center}
-.pg-btn{border:1.5px solid #e5e7eb;background:#fff;border-radius:6px;padding:4px 10px;font-size:.78rem;cursor:pointer;color:#374151;font-family:inherit;transition:all .15s;min-width:32px;text-align:center}
+.appr-table tbody tr:hover td{background:#f8fafc;cursor:pointer}
+.req-no{color:#0078d4;font-weight:700;font-size:.82rem}
+.td-email{max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.72rem;color:#718096}
+.td-summary{font-size:.76rem;color:#4a5568;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ── Status ── */
+.st-대기{display:inline-block;background:#fefce8;color:#854d0e;border-radius:5px;padding:2px 8px;font-size:.67rem;font-weight:700;border:1px solid #fde68a}
+.st-승인{display:inline-block;background:#f0fdf4;color:#166534;border-radius:5px;padding:2px 8px;font-size:.67rem;font-weight:700;border:1px solid #bbf7d0}
+.st-반려{display:inline-block;background:#fef2f2;color:#991b1b;border-radius:5px;padding:2px 8px;font-size:.67rem;font-weight:700;border:1px solid #fecaca}
+.st-대기잠김{display:inline-block;background:#f3f4f6;color:#6b7280;border-radius:5px;padding:2px 8px;font-size:.67rem;font-weight:700;border:1px solid #e5e7eb}
+
+/* ── Action buttons ── */
+.action-cell{display:flex;gap:5px;justify-content:flex-end;white-space:nowrap}
+.btn-approve{background:#16a34a;color:#fff;border:none;border-radius:6px;padding:4px 11px;font-size:.73rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+.btn-approve:hover{background:#15803d;transform:translateY(-1px)}
+.btn-reject{background:#dc2626;color:#fff;border:none;border-radius:6px;padding:4px 11px;font-size:.73rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+.btn-reject:hover{background:#b91c1c;transform:translateY(-1px)}
+.done-label{font-size:.7rem;color:#a0aec0;font-style:italic}
+
+/* ── Footer row ── */
+.summary-row{font-size:.73rem;color:#a0aec0;padding:7px 12px;background:#f8fafc;border-top:1px solid #edf2f7;text-align:right}
+
+/* ── Pagination ── */
+.pg-wrap{display:flex;align-items:center;justify-content:space-between;padding:7px 12px;background:#f8fafc;border-top:1px solid #edf2f7}
+.pg-info{font-size:.72rem;color:#718096}
+.pg-btns{display:flex;gap:3px;align-items:center}
+.pg-btn{border:1.5px solid #e2e8f0;background:#fff;border-radius:6px;padding:3px 9px;font-size:.75rem;cursor:pointer;color:#4a5568;font-family:inherit;transition:all .15s;min-width:28px;text-align:center}
 .pg-btn:hover:not(:disabled){border-color:#0078d4;color:#0078d4}
 .pg-btn.active{background:#0078d4;border-color:#0078d4;color:#fff;font-weight:700}
-.pg-btn:disabled{opacity:.4;cursor:not-allowed}
-.pg-ellipsis{font-size:.82rem;color:#9ca3af;padding:0 4px}
-/* Loading */
-#loading{display:none;position:fixed;inset:0;background:rgba(255,255,255,.7);align-items:center;justify-content:center;z-index:999;backdrop-filter:blur(2px)}
+.pg-btn:disabled{opacity:.35;cursor:not-allowed}
+.pg-ellipsis{font-size:.8rem;color:#a0aec0;padding:0 3px}
+
+/* ── All done ── */
+.all-done{text-align:center;padding:80px 20px;background:#fff;border-radius:14px;box-shadow:0 1px 4px rgba(0,0,0,.07);grid-column:1/-1}
+.all-done .icon{font-size:2.8rem;margin-bottom:14px}
+.all-done .msg{font-size:1rem;font-weight:700;color:#1a202c;margin-bottom:6px}
+.all-done .sub{font-size:.82rem;color:#a0aec0}
+
+/* ── Detail Modal ── */
+#detail-modal{display:none;position:fixed;inset:0;background:rgba(15,39,68,.5);z-index:200;align-items:flex-start;justify-content:center;padding:40px 16px;overflow-y:auto;backdrop-filter:blur(3px)}
+#detail-modal.open{display:flex}
+.modal-box{background:#fff;border-radius:16px;width:660px;max-width:100%;padding:30px 34px;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.2)}
+.modal-close{position:absolute;top:18px;right:20px;background:#f0f4f8;border:none;width:28px;height:28px;border-radius:50%;font-size:1rem;cursor:pointer;color:#718096;line-height:1;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.modal-close:hover{background:#e2e8f0;color:#2d3748}
+.modal-sys-badge{display:inline-flex;align-items:center;gap:6px;margin-bottom:14px}
+.modal-title{font-size:1.05rem;font-weight:700;color:#1a202c;margin-bottom:18px;padding-bottom:14px;border-bottom:1.5px solid #edf2f7}
+.modal-sec{margin:16px 0 10px;font-size:.7rem;font-weight:800;color:#0078d4;text-transform:uppercase;letter-spacing:.6px;padding:5px 10px;background:#eff6ff;border-left:3px solid #0078d4;border-radius:4px}
+.modal-row{display:flex;padding:7px 0;border-bottom:1px solid #f8fafc;font-size:.82rem}
+.modal-row:last-child{border-bottom:none}
+.modal-label{color:#718096;width:140px;flex-shrink:0;font-size:.75rem;font-weight:500}
+.modal-val{color:#1a202c;font-weight:500;flex:1;line-height:1.5}
+.appr-history{background:#f8fafc;border-radius:10px;border:1.5px solid #edf2f7;overflow:hidden;margin-top:4px}
+.appr-item{display:flex;justify-content:space-between;align-items:flex-start;padding:11px 14px;border-bottom:1px solid #edf2f7}
+.appr-item:last-child{border-bottom:none}
+.appr-order{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:#0078d4;color:#fff;border-radius:50%;font-size:.62rem;font-weight:700;flex-shrink:0;margin-right:8px;margin-top:1px}
+.appr-info{flex:1}
+.appr-role{font-size:.78rem;font-weight:700;color:#1a202c}
+.appr-person{font-size:.72rem;color:#718096;margin-top:2px}
+.appr-date{font-size:.68rem;color:#a0aec0;margin-top:2px}
+.appr-comment{margin-top:5px;font-size:.72rem;background:#fff;border:1px solid #e2e8f0;border-radius:6px;padding:5px 9px;color:#4a5568}
+.modal-action{display:flex;gap:10px;margin-top:22px}
+.modal-action .btn-approve,.modal-action .btn-reject{flex:1;padding:11px;font-size:.9rem;border-radius:9px}
+
+/* ── Confirm Modal ── */
+#confirm-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:600;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
+#confirm-modal.open{display:flex}
+.confirm-box{background:#fff;border-radius:16px;padding:30px 28px 24px;max-width:440px;width:92%;box-shadow:0 24px 60px rgba(0,0,0,.2)}
+.confirm-title{font-size:1rem;font-weight:700;color:#1a202c;margin-bottom:6px}
+.confirm-sub{font-size:.8rem;color:#718096;margin-bottom:14px}
+.confirm-comment{width:100%;border:1.5px solid #e2e8f0;border-radius:9px;padding:9px 12px;font-size:.82rem;font-family:inherit;resize:vertical;margin-bottom:16px;transition:border .15s}
+.confirm-comment:focus{outline:none;border-color:#0078d4}
+.confirm-btns{display:flex;justify-content:flex-end;gap:8px}
+.btn-cancel{background:#fff;border:1.5px solid #e2e8f0;border-radius:8px;padding:8px 20px;font-size:.85rem;cursor:pointer;font-family:inherit;color:#4a5568}
+.btn-cancel:hover{border-color:#a0aec0}
+
+/* ── Loading ── */
+#loading{display:none;position:fixed;inset:0;background:rgba(255,255,255,.75);align-items:center;justify-content:center;z-index:999;backdrop-filter:blur(4px)}
 #loading.show{display:flex}
-.loading-box{background:#fff;border-radius:12px;padding:28px 40px;display:flex;flex-direction:column;align-items:center;gap:14px;box-shadow:0 4px 24px rgba(0,0,0,.12)}
-.spinner{width:32px;height:32px;border:3px solid #e5e7eb;border-top:3px solid #0078d4;border-radius:50%;animation:spin .8s linear infinite}
+.loading-box{background:#fff;border-radius:14px;padding:30px 44px;display:flex;flex-direction:column;align-items:center;gap:14px;box-shadow:0 8px 32px rgba(0,0,0,.12)}
+.spinner{width:32px;height:32px;border:3px solid #e2e8f0;border-top:3px solid #0078d4;border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.loading-text{font-size:.85rem;color:#4b5563;font-weight:500}
-@media(max-width:1100px){#content{grid-template-columns:1fr}}
-@media(max-width:600px){#content{grid-template-columns:1fr}.sys-card-header{flex-wrap:wrap;gap:6px}}
+.loading-text{font-size:.85rem;color:#4a5568;font-weight:500}
+
+/* ── Responsive ── */
+@media(max-width:1200px){#content{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:780px){#content{grid-template-columns:1fr}.page{padding:16px 12px 40px}.topnav{padding:0 16px}}
 </style>
 </head>
 <body>
+
 <div id="login-screen">
   <div class="login-card">
     <div class="login-logo">📬</div>
@@ -149,48 +183,70 @@ body{font-family:'Segoe UI',Tahoma,sans-serif;background:#f0f2f5;min-height:100v
 </div>
 
 <div id="app">
-  <div class="header">
-    <div class="header-brand">
-      <span class="header-icon">📬</span>
+  <!-- Top Nav -->
+  <div class="topnav">
+    <div class="nav-brand">
+      <div class="nav-icon">📬</div>
       <div>
-        <div class="header-title">STK 통합 결재함</div>
-        <div class="header-sub">STK Korea 결재 시스템 전체 대기 항목</div>
+        <div class="nav-title">STK 통합 결재함</div>
+        <div class="nav-sub">STK Korea 결재 시스템</div>
       </div>
     </div>
-    <div class="user-row">
-      <span class="user-name" id="user-name"></span>
-      <button id="btn-logout" onclick="signOut()">로그아웃</button>
+    <div class="nav-right">
+      <div class="nav-user">
+        <div class="nav-user-avatar" id="user-avatar">?</div>
+        <span class="nav-user-name" id="user-name"></span>
+      </div>
+      <button class="btn-signout" onclick="signOut()">로그아웃</button>
     </div>
   </div>
 
-  <div class="filter-bar">
-    <select id="filter-sys" onchange="resetPages();renderAll()">
-      <option value="">전체 시스템</option>
-      <option value="IT">IT Ticket</option>
-      <option value="SCC">STK Contract</option>
-      <option value="GW">Goodwill</option>
-      <option value="BP">BP Master</option>
-      <option value="FA">FA Registration</option>
-      <option value="MC">Mobility Car</option>
-      <option value="RR">Repair Report</option>
-    </select>
-    <select id="filter-status" onchange="resetPages();renderAll()">
-      <option value="대기">대기 중</option>
-      <option value="">전체</option>
-      <option value="승인">승인</option>
-      <option value="반려">반려</option>
-    </select>
-    <span class="summary-badge" id="summary-count">0건</span>
-    <button class="btn-refresh" onclick="loadAll()">🔄 새로고침</button>
-  </div>
+  <div class="page">
+    <!-- Summary + actions -->
+    <div class="summary-strip">
+      <span class="strip-title">결재 대기함</span>
+      <span class="strip-total" id="summary-count">0건</span>
+      <div class="strip-spacer"></div>
+      <div class="strip-actions">
+        <a id="history-link" href="#" target="_blank" class="btn-history">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          결재 이력 보기
+        </a>
+        <button class="btn-refresh" onclick="loadAll()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+          새로고침
+        </button>
+      </div>
+    </div>
 
-  <div id="content"></div>
+    <!-- Filter -->
+    <div class="filter-row">
+      <select class="filter-select" id="filter-sys" onchange="resetPages();renderAll()">
+        <option value="">전체 시스템</option>
+        <option value="IT">IT Ticket</option>
+        <option value="SCC">STK Contract</option>
+        <option value="GW">Goodwill</option>
+        <option value="BP">BP Master</option>
+        <option value="FA">FA Registration</option>
+        <option value="MC">Mobility Car</option>
+        <option value="RR">Repair Report</option>
+      </select>
+      <select class="filter-select" id="filter-status" onchange="resetPages();renderAll()">
+        <option value="대기">대기 중</option>
+        <option value="">전체</option>
+        <option value="승인">승인</option>
+        <option value="반려">반려</option>
+      </select>
+    </div>
+
+    <div id="content"></div>
+  </div>
 </div>
 
 <!-- Detail Modal -->
 <div id="detail-modal" onclick="if(event.target===this)closeDetail()">
   <div class="modal-box">
-    <button class="modal-close" onclick="closeDetail()">×</button>
+    <button class="modal-close" onclick="closeDetail()">✕</button>
     <div id="detail-sys-badge" class="modal-sys-badge"></div>
     <div class="modal-title" id="detail-title"></div>
     <div id="detail-content"></div>
@@ -226,18 +282,18 @@ const GRAPH='https://graph.microsoft.com/v1.0';
 const SCOPES=['User.Read','Sites.ReadWrite.All','Files.ReadWrite.All'];
 
 const SYSTEMS=[
-  {key:'IT', name:'IT Ticket',       apr:'IT_Approvals',          req:'IT_Requests',    url:'https://itsm-ticket.startruckkorea.com/'},
-  {key:'SCC',name:'STK Contract',    apr:'STK_ContractApprovals', req:'STK_Contracts',  url:'https://scc.startruckkorea.com/'},
-  {key:'GW', name:'Goodwill',        apr:'GW_Approvals',          req:'GW_Requests',    url:'https://gw.startruckkorea.com/'},
-  {key:'BP', name:'BP Master Data',  apr:'BP_Approvals',          req:'BP_Requests',    url:'https://bp-master.startruckkorea.com/'},
-  {key:'FA', name:'FA Registration', apr:'FA_Approvals',          req:'FA_Requests',    url:'https://fa.startruckkorea.com/'},
-  {key:'MC', name:'Mobility Car',    apr:'MC_Approvals',          req:'MC_Requests',    url:'https://mc.startruckkorea.com/'},
-  {key:'RR', name:'Repair Report',   apr:'RR_Approvals',          req:'RR_Requests',    url:'https://mc.startruckkorea.com/'},
+  {key:'IT', name:'IT Ticket',       apr:'IT_Approvals',          req:'IT_Requests',    url:'https://itsm-ticket.startruckkorea.com/', historyList:'IT_Approvals'},
+  {key:'SCC',name:'STK Contract',    apr:'STK_ContractApprovals', req:'STK_Contracts',  url:'https://scc.startruckkorea.com/',         historyList:'STK_ContractApprovals'},
+  {key:'GW', name:'Goodwill',        apr:'GW_Approvals',          req:'GW_Requests',    url:'https://gw.startruckkorea.com/',          historyList:'GW_Approvals'},
+  {key:'BP', name:'BP Master Data',  apr:'BP_Approvals',          req:'BP_Requests',    url:'https://bp-master.startruckkorea.com/',   historyList:'BP_Approvals'},
+  {key:'FA', name:'FA Registration', apr:'FA_Approvals',          req:'FA_Requests',    url:'https://fa.startruckkorea.com/',          historyList:'FA_Approvals'},
+  {key:'MC', name:'Mobility Car',    apr:'MC_Approvals',          req:'MC_Requests',    url:'https://mc.startruckkorea.com/',          historyList:'MC_Approvals'},
+  {key:'RR', name:'Repair Report',   apr:'RR_Approvals',          req:'RR_Requests',    url:'https://mc.startruckkorea.com/',          historyList:'RR_Approvals'},
 ];
 
 let msalApp=null,user=null,siteId=null,_allData={},_pending=null;
 const PAGE_SIZE=20;
-let _pages={}; // sysKey -> current page (0-based)
+let _pages={};
 
 window.addEventListener('load',async()=>{
   const btn=document.getElementById('btn-login');
@@ -286,6 +342,12 @@ async function boot(account){
   try{const me=await api('/me?$select=mail,userPrincipalName');user.email=(me.mail||me.userPrincipalName||account.username||'').toLowerCase();}
   catch(e){user.email=(account.username||'').toLowerCase();}
   document.getElementById('user-name').textContent=account.name||account.username;
+  const initials=(account.name||'?').split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+  document.getElementById('user-avatar').textContent=initials;
+
+  // 결재 이력 링크: SharePoint STK-DB 사이트로
+  document.getElementById('history-link').href='https://startruckkorea.sharepoint.com/sites/STK-DB';
+
   loading(true,'데이터 불러오는 중...');
   const site=await api('/sites/'+SITE_PATH);
   siteId=site.id;
@@ -313,10 +375,10 @@ async function loadAll(){
 function summary(sysKey,rf){
   if(sysKey==='GW')  return(rf.Source||'')+' / '+(rf.GoodwillType||'');
   if(sysKey==='BP')  return(rf.BPType||'')+' / '+(rf.SubCategory||'');
-  if(sysKey==='FA')  return(rf.FAType||'')+' / '+(rf.Title||'').substring(0,30);
-  if(sysKey==='SCC') return(rf.ContractCompanyType||'')+' / '+(rf.Title||'').substring(0,30);
-  if(sysKey==='IT')  return(rf.TicketType||'')+' / '+(rf.Title||'').substring(0,30);
-  if(sysKey==='MC')  return(rf.Department||'')+' / '+(rf.Period||'').substring(0,24);
+  if(sysKey==='FA')  return(rf.FAType||'')+' / '+(rf.Title||'').substring(0,28);
+  if(sysKey==='SCC') return(rf.ContractCompanyType||'')+' / '+(rf.Title||'').substring(0,28);
+  if(sysKey==='IT')  return(rf.TicketType||'')+' / '+(rf.Title||'').substring(0,28);
+  if(sysKey==='MC')  return(rf.Department||'')+' / '+(rf.Period||'').substring(0,22);
   if(sysKey==='RR')  return(rf.VehicleModel||'')+' / '+(rf.AccidentType||'');
   return'-';
 }
@@ -338,8 +400,8 @@ function renderAll(){
   for(const sys of SYSTEMS){
     if(fSys&&fSys!==sys.key)continue;
     const d=_allData[sys.key];
-    if(!d){html+=card(sys,'<div class="sys-empty">불러오는 중...</div>',0);continue;}
-    if(d.error){html+=card(sys,`<div class="sys-empty" style="color:#dc2626">⚠️ ${d.error}</div>`,0);continue;}
+    if(!d){html+=card(sys,'<div class="sys-empty">⏳ 불러오는 중...</div>',0);continue;}
+    if(d.error){html+=card(sys,`<div class="sys-empty" style="color:#e53e3e">⚠️ ${d.error}</div>`,0);continue;}
 
     let mine=d.apprItems.filter(i=>(i.fields.ApproverEmail||'').toLowerCase()===myEmail);
     if(fSt)mine=mine.filter(i=>(i.fields.Status||'').trim()===fSt);
@@ -349,12 +411,11 @@ function renderAll(){
     });
     total+=mine.length;
 
-    if(!mine.length){html+=card(sys,`<div class="sys-empty">${fSt==='대기'?'결재 대기 항목이 없습니다 ✓':'항목이 없습니다'}</div>`,0);continue;}
+    if(!mine.length){html+=card(sys,`<div class="sys-empty">✓ ${fSt==='대기'?'결재 대기 항목이 없습니다':'항목이 없습니다'}</div>`,0);continue;}
 
-    // 페이지네이션
     const totalItems=mine.length;
     const totalPages=Math.max(1,Math.ceil(totalItems/PAGE_SIZE));
-    const curPage=Math.min(_pages[sys.key]||0, totalPages-1);
+    const curPage=Math.min(_pages[sys.key]||0,totalPages-1);
     _pages[sys.key]=curPage;
     const pageItems=mine.slice(curPage*PAGE_SIZE,(curPage+1)*PAGE_SIZE);
 
@@ -363,12 +424,12 @@ function renderAll(){
       const f=item.fields,rf=d.reqMap[String(f.RequestID)]||{};
       const isPending=(f.Status||'').trim()==='대기';
       rows+=`<tr onclick="showDetail('${sys.key}',${f.RequestID})">
-        <td style="width:44px"><span class="req-no">#${f.RequestID}</span></td>
-        <td style="width:140px;font-size:.72rem;color:#6b7280;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${rf.RequesterEmail||'-'}</td>
-        <td style="font-size:.78rem">${summary(sys.key,rf)||'-'}</td>
-        <td style="width:60px">${stBadge(f.Status)}</td>
-        <td style="width:100px;font-size:.72rem;color:#6b7280">${fmt(rf.RequestDate)}</td>
-        <td style="width:110px" onclick="event.stopPropagation()">
+        <td style="width:38px"><span class="req-no">#${f.RequestID}</span></td>
+        <td class="td-email">${rf.RequesterEmail||'-'}</td>
+        <td class="td-summary">${summary(sys.key,rf)||'-'}</td>
+        <td style="width:58px">${stBadge(f.Status)}</td>
+        <td style="width:90px;font-size:.7rem;color:#718096">${fmt(rf.RequestDate)}</td>
+        <td style="width:100px" onclick="event.stopPropagation()">
           <div class="action-cell">
             ${isPending
               ?`<button class="btn-approve" onclick="showConfirm(${item.id},'승인',${f.RequestID},'${sys.key}')">승인</button><button class="btn-reject" onclick="showConfirm(${item.id},'반려',${f.RequestID},'${sys.key}')">반려</button>`
@@ -378,10 +439,9 @@ function renderAll(){
       </tr>`;
     });
 
-    // 페이지네이션 버튼 생성
     let pgHtml='';
     if(totalPages>1){
-      const start=curPage*PAGE_SIZE+1, end=Math.min((curPage+1)*PAGE_SIZE,totalItems);
+      const start=curPage*PAGE_SIZE+1,end=Math.min((curPage+1)*PAGE_SIZE,totalItems);
       let btns=`<button class="pg-btn" onclick="goPage('${sys.key}',${curPage-1})" ${curPage===0?'disabled':''}>‹</button>`;
       for(let p=0;p<totalPages;p++){
         if(totalPages>7&&p>0&&p<totalPages-1&&Math.abs(p-curPage)>2){
@@ -391,18 +451,18 @@ function renderAll(){
         btns+=`<button class="pg-btn${p===curPage?' active':''}" onclick="goPage('${sys.key}',${p})">${p+1}</button>`;
       }
       btns+=`<button class="pg-btn" onclick="goPage('${sys.key}',${curPage+1})" ${curPage===totalPages-1?'disabled':''}>›</button>`;
-      pgHtml=`<div class="pg-wrap"><span class="pg-info">${start}–${end} / 전체 ${totalItems}건</span><div class="pg-btns">${btns}</div></div>`;
+      pgHtml=`<div class="pg-wrap"><span class="pg-info">${start}–${end} / ${totalItems}건</span><div class="pg-btns">${btns}</div></div>`;
     }
 
     html+=card(sys,
       `<table class="appr-table">
         <thead><tr>
-          <th style="width:44px">번호</th>
-          <th style="width:140px">신청자</th>
+          <th style="width:38px">No.</th>
+          <th>신청자</th>
           <th>요약</th>
-          <th style="width:60px">상태</th>
-          <th style="width:100px">신청일</th>
-          <th style="width:110px;text-align:right">처리</th>
+          <th style="width:58px">상태</th>
+          <th style="width:90px">신청일</th>
+          <th style="width:100px;text-align:right">처리</th>
         </tr></thead>
         <tbody>${rows}</tbody>
       </table>
@@ -432,7 +492,7 @@ function card(sys,inner,cnt){
 
 async function showDetail(sysKey,reqId){
   const modal=document.getElementById('detail-modal');
-  document.getElementById('detail-content').innerHTML='<div style="text-align:center;padding:32px;color:#6b7280"><div class="spinner" style="margin:0 auto 12px"></div>불러오는 중...</div>';
+  document.getElementById('detail-content').innerHTML='<div style="text-align:center;padding:32px;color:#718096"><div class="spinner" style="margin:0 auto 12px"></div>불러오는 중...</div>';
   document.getElementById('detail-sys-badge').innerHTML=`<span class="sys-badge sys-${sysKey}">${sysKey}</span>`;
   document.getElementById('detail-title').textContent='신청 #'+reqId+' 상세보기';
   modal.className='open';
@@ -444,7 +504,7 @@ async function showDetail(sysKey,reqId){
     ]);
     const f=r.fields;
     const apprList=apprData.value.filter(i=>Number(i.fields.RequestID)===Number(reqId)).sort((a,b)=>a.fields.ApprovalOrder-b.fields.ApprovalOrder);
-    const sc={'대기':'#b45309','승인':'#15803d','반려':'#b91c1c','대기(잠김)':'#6b7280','승인완료':'#15803d'};
+    const sc={'대기':'#b45309','승인':'#15803d','반려':'#b91c1c','대기(잠김)':'#718096','승인완료':'#15803d'};
     const sec=t=>`<div class="modal-sec">${t}</div>`;
     const row=(l,v)=>`<div class="modal-row"><div class="modal-label">${l}</div><div class="modal-val">${v||'-'}</div></div>`;
 
@@ -469,7 +529,7 @@ async function showDetail(sysKey,reqId){
             ${af.Comment?`<div class="appr-comment">💬 ${af.Comment}</div>`:''}
           </div>
         </div>
-        <span style="color:${sc[af.Status]||'#374151'};font-weight:700;font-size:.78rem;white-space:nowrap;padding-left:8px">${af.Status||''}</span>
+        <span style="color:${sc[af.Status]||'#4a5568'};font-weight:700;font-size:.78rem;white-space:nowrap;padding-left:8px">${af.Status||''}</span>
       </div>`;}).join('')+'</div>';
 
     const myPending=apprList.find(a=>(a.fields.ApproverEmail||'').toLowerCase()===(user.email||'').toLowerCase()&&(a.fields.Status||'').trim()==='대기');
@@ -478,7 +538,7 @@ async function showDetail(sysKey,reqId){
         <button onclick="showConfirm(${myPending.id},'승인',${reqId},'${sysKey}')" class="btn-approve">✅ 승인</button>
         <button onclick="showConfirm(${myPending.id},'반려',${reqId},'${sysKey}')" class="btn-reject">❌ 반려</button>
       </div>`:'');
-  }catch(e){document.getElementById('detail-content').innerHTML=`<p style="color:#dc2626;padding:16px">오류: ${e.message}</p>`;}
+  }catch(e){document.getElementById('detail-content').innerHTML=`<p style="color:#e53e3e;padding:16px">오류: ${e.message}</p>`;}
 }
 function closeDetail(){document.getElementById('detail-modal').className='';}
 
