@@ -37,9 +37,10 @@ body{font-family:'Segoe UI',Tahoma,sans-serif;background:#f0f2f5;min-height:100v
 .summary-badge{background:#0078d4;color:#fff;border-radius:20px;padding:4px 14px;font-size:.78rem;font-weight:600;margin-left:auto}
 .btn-refresh{background:#fff;border:1.5px solid #e5e7eb;border-radius:8px;padding:7px 16px;font-size:.82rem;cursor:pointer;font-family:inherit;color:#374151;display:flex;align-items:center;gap:5px;transition:all .15s}
 .btn-refresh:hover{border-color:#0078d4;color:#0078d4}
-/* System card */
-.sys-card{background:#fff;border-radius:12px;margin-bottom:14px;box-shadow:0 1px 6px rgba(0,0,0,.06);overflow:hidden}
-.sys-card-header{padding:13px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1.5px solid #f3f4f6}
+/* System card grid */
+#content{display:grid;grid-template-columns:repeat(auto-fill,minmax(480px,1fr));gap:14px}
+.sys-card{background:#fff;border-radius:12px;box-shadow:0 1px 6px rgba(0,0,0,.06);overflow:hidden;display:flex;flex-direction:column}
+.sys-card-header{padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1.5px solid #f3f4f6}
 .sys-card-left{display:flex;align-items:center;gap:9px}
 .sys-badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:.68rem;font-weight:700;letter-spacing:.3px}
 .sys-IT{background:#dbeafe;color:#1d4ed8}.sys-SCC{background:#dcfce7;color:#15803d}
@@ -54,8 +55,8 @@ body{font-family:'Segoe UI',Tahoma,sans-serif;background:#f0f2f5;min-height:100v
 .sys-empty{padding:18px 20px;color:#9ca3af;font-size:.82rem}
 /* Table */
 .appr-table{width:100%;border-collapse:collapse}
-.appr-table th{padding:9px 16px;text-align:left;background:#f9fafb;border-bottom:1.5px solid #f3f4f6;font-size:.72rem;font-weight:700;color:#6b7280;letter-spacing:.3px;text-transform:uppercase}
-.appr-table td{padding:11px 16px;border-bottom:1px solid #f3f4f6;font-size:.82rem;color:#374151;vertical-align:middle}
+.appr-table th{padding:7px 12px;text-align:left;background:#f9fafb;border-bottom:1.5px solid #f3f4f6;font-size:.68rem;font-weight:700;color:#6b7280;letter-spacing:.3px;text-transform:uppercase}
+.appr-table td{padding:8px 12px;border-bottom:1px solid #f3f4f6;font-size:.78rem;color:#374151;vertical-align:middle}
 .appr-table tbody tr:last-child td{border-bottom:none}
 .appr-table tbody tr:hover td{background:#f9fafb}
 .appr-table tbody tr{cursor:pointer;transition:background .1s}
@@ -74,7 +75,7 @@ body{font-family:'Segoe UI',Tahoma,sans-serif;background:#f0f2f5;min-height:100v
 /* No. column */
 .req-no{color:#0078d4;font-weight:700;font-size:.85rem}
 /* Summary row */
-.summary-row{font-size:.78rem;color:#6b7280;padding:10px 20px;background:#f9fafb;border-top:1px solid #f3f4f6;text-align:right}
+.summary-row{font-size:.75rem;color:#6b7280;padding:7px 14px;background:#f9fafb;border-top:1px solid #f3f4f6;text-align:right}
 /* All done */
 .all-done{text-align:center;padding:72px 20px;background:#fff;border-radius:12px;box-shadow:0 1px 6px rgba(0,0,0,.06)}
 .all-done .icon{font-size:3rem;margin-bottom:14px}
@@ -117,7 +118,7 @@ body{font-family:'Segoe UI',Tahoma,sans-serif;background:#f0f2f5;min-height:100v
 .btn-cancel{background:#fff;border:1.5px solid #e5e7eb;border-radius:8px;padding:8px 20px;font-size:.85rem;cursor:pointer;font-family:inherit;color:#374151}
 .btn-cancel:hover{border-color:#9ca3af}
 /* Pagination */
-.pg-wrap{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:#f9fafb;border-top:1px solid #f3f4f6}
+.pg-wrap{display:flex;align-items:center;justify-content:space-between;padding:7px 14px;background:#f9fafb;border-top:1px solid #f3f4f6}
 .pg-info{font-size:.75rem;color:#6b7280}
 .pg-btns{display:flex;gap:4px;align-items:center}
 .pg-btn{border:1.5px solid #e5e7eb;background:#fff;border-radius:6px;padding:4px 10px;font-size:.78rem;cursor:pointer;color:#374151;font-family:inherit;transition:all .15s;min-width:32px;text-align:center}
@@ -132,6 +133,8 @@ body{font-family:'Segoe UI',Tahoma,sans-serif;background:#f0f2f5;min-height:100v
 .spinner{width:32px;height:32px;border:3px solid #e5e7eb;border-top:3px solid #0078d4;border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading-text{font-size:.85rem;color:#4b5563;font-weight:500}
+@media(max-width:1100px){#content{grid-template-columns:1fr}}
+@media(max-width:600px){#content{grid-template-columns:1fr}.sys-card-header{flex-wrap:wrap;gap:6px}}
 </style>
 </head>
 <body>
@@ -360,12 +363,12 @@ function renderAll(){
       const f=item.fields,rf=d.reqMap[String(f.RequestID)]||{};
       const isPending=(f.Status||'').trim()==='대기';
       rows+=`<tr onclick="showDetail('${sys.key}',${f.RequestID})">
-        <td style="width:60px"><span class="req-no">#${f.RequestID}</span></td>
-        <td style="width:180px;font-size:.78rem;color:#6b7280">${rf.RequesterEmail||'-'}</td>
+        <td style="width:44px"><span class="req-no">#${f.RequestID}</span></td>
+        <td style="width:140px;font-size:.72rem;color:#6b7280;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${rf.RequesterEmail||'-'}</td>
         <td style="font-size:.78rem">${summary(sys.key,rf)||'-'}</td>
-        <td style="width:80px">${stBadge(f.Status)}</td>
-        <td style="width:130px;font-size:.75rem;color:#6b7280">${fmt(rf.RequestDate)}</td>
-        <td style="width:140px" onclick="event.stopPropagation()">
+        <td style="width:60px">${stBadge(f.Status)}</td>
+        <td style="width:100px;font-size:.72rem;color:#6b7280">${fmt(rf.RequestDate)}</td>
+        <td style="width:110px" onclick="event.stopPropagation()">
           <div class="action-cell">
             ${isPending
               ?`<button class="btn-approve" onclick="showConfirm(${item.id},'승인',${f.RequestID},'${sys.key}')">승인</button><button class="btn-reject" onclick="showConfirm(${item.id},'반려',${f.RequestID},'${sys.key}')">반려</button>`
@@ -394,12 +397,12 @@ function renderAll(){
     html+=card(sys,
       `<table class="appr-table">
         <thead><tr>
-          <th style="width:60px">번호</th>
-          <th style="width:180px">신청자</th>
+          <th style="width:44px">번호</th>
+          <th style="width:140px">신청자</th>
           <th>요약</th>
-          <th style="width:80px">상태</th>
-          <th style="width:130px">신청일</th>
-          <th style="width:140px;text-align:right">처리</th>
+          <th style="width:60px">상태</th>
+          <th style="width:100px">신청일</th>
+          <th style="width:110px;text-align:right">처리</th>
         </tr></thead>
         <tbody>${rows}</tbody>
       </table>
