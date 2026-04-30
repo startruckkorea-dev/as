@@ -240,6 +240,9 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f5f7f
         <option value="FA">FA Registration</option>
         <option value="MC">Mobility Car</option>
         <option value="RR">Repair Report</option>
+        <option value="GA_STN">GA Stationery</option>
+        <option value="GA_BC">GA Business Card</option>
+        <option value="GA_IDC">GA ID Card</option>
       </select>
       <select class="filter-select" id="filter-status" onchange="resetPages();renderAll()">
         <option value="대기">대기 중</option>
@@ -298,7 +301,10 @@ const SYSTEMS=[
   {key:'BP', name:'BP Master Data',  apr:'BP_Approvals',          req:'BP_Requests',    url:'https://bp-master.startruckkorea.com/',   historyList:'BP_Approvals'},
   {key:'FA', name:'FA Registration', apr:'FA_Approvals',          req:'FA_Requests',    url:'https://fa.startruckkorea.com/',          historyList:'FA_Approvals'},
   {key:'MC', name:'Mobility Car',    apr:'MC_Approvals',          req:'MC_Requests',    url:'https://mc.startruckkorea.com/',          historyList:'MC_Approvals'},
-  {key:'RR', name:'Repair Report',   apr:'RR_Approvals',          req:'RR_Requests',    url:'https://mc.startruckkorea.com/',          historyList:'RR_Approvals'},
+  {key:'RR',     name:'Repair Report',    apr:'RR_Approvals',     req:'RR_Requests',    url:'https://mc.startruckkorea.com/',        historyList:'RR_Approvals'},
+  {key:'GA_STN', name:'GA Stationery',    apr:'STN_Approvals',    req:'STN_Requests',   url:'https://ga.startruckkorea.com/',        historyList:'STN_Approvals'},
+  {key:'GA_BC',  name:'GA Business Card', apr:'BC_Approvals',     req:'BC_Requests',    url:'https://ga.startruckkorea.com/',        historyList:'BC_Approvals'},
+  {key:'GA_IDC', name:'GA ID Card',       apr:'IDC_Approvals',    req:'IDC_Requests',   url:'https://ga.startruckkorea.com/',        historyList:'IDC_Approvals'},
 ];
 
 let msalApp=null,user=null,siteId=null,_allData={},_pending=null;
@@ -387,6 +393,9 @@ function summary(sysKey,rf){
   if(sysKey==='IT')  return(rf.TicketType||'')+' / '+(rf.Title||'').substring(0,28);
   if(sysKey==='MC')  return(rf.Department||'')+' / '+(rf.Period||'').substring(0,22);
   if(sysKey==='RR')  return(rf.VehicleModel||'')+' / '+(rf.AccidentType||'');
+  if(sysKey==='GA_STN') return(rf.Company||'')+' / '+(rf.CostCenter||'');
+  if(sysKey==='GA_BC')  return(rf.NameEN||'')+' / '+(rf.Quantity||'')+'매';
+  if(sysKey==='GA_IDC') return(rf.IssueType||'')+' / '+(rf.CostCenter||'');
   return'-';
 }
 
@@ -514,6 +523,9 @@ async function showDetail(sysKey,reqId){
     else if(sysKey==='IT')  info+=sec('신청 정보')+row('Type',f.TicketType)+row('Title',f.Title)+row('Description','<div style="white-space:pre-wrap">'+(f.Description||'-')+'</div>');
     else if(sysKey==='MC')  info+=sec('신청 정보')+row('Company',f.Company)+row('Department',f.Department)+row('Car Model',f.CarModel)+row('Period',f.Period)+row('Driver',f.DriverName);
     else if(sysKey==='RR')  info+=sec('신청 정보')+row('Vehicle Model',f.VehicleModel)+row('Plate No.',f.PlateNumber)+row('Accident Type',f.AccidentType)+row('Date/Time',f.AccidentDateTime)+row('Location',f.Location)+row('Description','<div style="white-space:pre-wrap">'+(f.Description||'-')+'</div>');
+    else if(sysKey==='GA_STN') info+=sec('신청 정보')+row('Company',f.Company)+row('Cost Center',f.CostCenter)+row('Description',f.Description||'-');
+    else if(sysKey==='GA_BC')  info+=sec('신청 정보')+row('Name (EN)',f.NameEN)+row('Name (KO)',f.NameKO)+row('Department',f.Department)+row('Quantity',f.Quantity+'매')+row('Cost Center',f.CostCenter);
+    else if(sysKey==='GA_IDC') info+=sec('신청 정보')+row('Issue Type',f.IssueType)+row('Cost Center',f.CostCenter)+row('Description',f.Description||'-');
 
     const apprHtml=sec('결재 이력')+'<div class="appr-history">'+
       apprList.map(a=>{const af=a.fields;return`<div class="appr-item">
