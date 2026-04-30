@@ -505,8 +505,8 @@ function renderAll(){
 
   document.getElementById('content').innerHTML=`
     ${doneBanner}
-    ${mainContent?`<div id="pending-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start;margin-bottom:${doneBanner?'24px':'0'}">${mainContent}</div>`:''}
-;
+    ${mainContent?`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start">${mainContent}</div>`:''}
+`;
 }
 
 function card(sys,inner,cnt){
