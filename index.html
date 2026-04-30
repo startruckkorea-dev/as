@@ -54,7 +54,7 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f5f7f
 .filter-select:focus{outline:none;border-color:#3b82f6}
 
 /* ── Grid ── */
-#content{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start}
+#content{}
 
 /* ── System card ── */
 .sys-card{background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.04);transition:box-shadow .2s}
@@ -110,10 +110,21 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f5f7f
 .pg-btn:disabled{opacity:.3;cursor:not-allowed}
 
 /* ── All done ── */
-.all-done{text-align:center;padding:80px 20px;background:#fff;border-radius:20px;grid-column:1/-1;box-shadow:0 1px 3px rgba(0,0,0,.06)}
-.all-done .icon{font-size:2.6rem;margin-bottom:14px}
-.all-done .msg{font-size:1rem;font-weight:700;color:#1e293b;margin-bottom:6px}
-.all-done .sub{font-size:.82rem;color:#94a3b8}
+.all-done-banner{background:linear-gradient(90deg,#f0fdf4,#dcfce7);border:1px solid #86efac;border-radius:14px;padding:14px 24px;display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.all-done-banner .icon{font-size:1.4rem}
+.all-done-banner .msg{font-size:.9rem;font-weight:700;color:#166534}
+.all-done-banner .sub{font-size:.78rem;color:#4ade80;margin-top:1px}
+/* shortcut grid */
+.sc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.sc-card{background:#fff;border-radius:16px;padding:20px 20px 18px;box-shadow:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.04);display:flex;flex-direction:column;gap:10px;transition:box-shadow .2s;cursor:pointer}
+.sc-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.12);transform:translateY(-1px)}
+.sc-card-top{display:flex;align-items:center;justify-content:space-between}
+.sc-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+.sc-arrow{font-size:.8rem;color:#94a3b8}
+.sc-name{font-size:.88rem;font-weight:700;color:#1e293b}
+.sc-desc{font-size:.72rem;color:#94a3b8}
+@media(max-width:1100px){.sc-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:680px){.sc-grid{grid-template-columns:1fr}}
 
 /* ── Detail Modal ── */
 #detail-modal{display:none;position:fixed;inset:0;background:rgba(15,39,68,.55);z-index:200;align-items:flex-start;justify-content:center;padding:40px 16px;overflow-y:auto;backdrop-filter:blur(4px)}
@@ -476,9 +487,39 @@ function renderAll(){
   }
 
   document.getElementById('summary-count').textContent='총 '+total+'건';
-  document.getElementById('content').innerHTML=total===0&&fSt==='대기'
-    ?`<div class="all-done"><div class="icon">✅</div><div class="msg">모든 결재 완료!</div><div class="sub">현재 대기 중인 결재 항목이 없습니다.</div></div>`
-    :html||'<div class="all-done"><div class="icon">📭</div><div class="msg">항목 없음</div><div class="sub">필터 조건에 해당하는 항목이 없습니다.</div></div>';
+
+  // 바로가기 카드 (항상 표시)
+  const SC_ICONS={IT:'🖥️',SCC:'📄',GW:'🤝',BP:'🏢',FA:'🏷️',MC:'🚗',RR:'🔧',GA_STN:'📦',GA_BC:'💳',GA_IDC:'🪪'};
+  const SC_DESC={IT:'IT 지원 요청',SCC:'계약 검토·승인',GW:'Goodwill 결재',BP:'BP 마스터 등록',FA:'고정자산 등록',MC:'법인차 신청',RR:'수리 보고서',GA_STN:'문구 구매 신청',GA_BC:'명함 신청',GA_IDC:'사원증 신청'};
+  const SC_COLOR={IT:'#3b82f6',SCC:'#10b981',GW:'#f59e0b',BP:'#8b5cf6',FA:'#ec4899',MC:'#06b6d4',RR:'#ef4444',GA_STN:'#6366f1',GA_BC:'#0ea5e9',GA_IDC:'#14b8a6'};
+  const scHtml=SYSTEMS.map(s=>`
+    <div class="sc-card" onclick="window.open('${s.url}','_blank')">
+      <div class="sc-card-top">
+        <div class="sc-icon" style="background:${SC_COLOR[s.key]}18;color:${SC_COLOR[s.key]}">${SC_ICONS[s.key]||'📋'}</div>
+        <span class="sc-arrow">→</span>
+      </div>
+      <div>
+        <div class="sc-name">${s.name}</div>
+        <div class="sc-desc">${SC_DESC[s.key]||''}</div>
+      </div>
+    </div>`).join('');
+
+  const doneBanner=total===0&&fSt==='대기'
+    ?`<div class="all-done-banner"><div class="icon">✅</div><div><div class="msg">모든 결재 완료!</div><div class="sub">현재 대기 중인 결재 항목이 없습니다.</div></div></div>`:'';
+
+  const mainContent=total===0&&fSt==='대기'
+    ?''
+    :html||'<div style="grid-column:1/-1;text-align:center;padding:40px;color:#94a3b8;font-size:.85rem">📭 필터 조건에 해당하는 항목이 없습니다.</div>';
+
+  document.getElementById('content').innerHTML=`
+    ${doneBanner}
+    ${mainContent?`<div id="pending-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start;margin-bottom:${doneBanner?'24px':'0'}">${mainContent}</div>`:''}
+    <div style="margin-top:${(doneBanner&&!mainContent)?'0':'24px'}">
+      <div style="font-size:.8rem;font-weight:600;color:#64748b;margin-bottom:12px;display:flex;align-items:center;gap:6px">
+        <span>🔗</span> 시스템 바로가기
+      </div>
+      <div class="sc-grid">${scHtml}</div>
+    </div>`;
 }
 
 function card(sys,inner,cnt){
