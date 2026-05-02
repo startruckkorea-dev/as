@@ -55,6 +55,7 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f5f7f
 
 /* ── Grid ── */
 #content{}
+.cards-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start}
 
 /* ── System card ── */
 .sys-card{background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.04);transition:box-shadow .2s}
@@ -183,6 +184,7 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f5f7f
 @media(max-width:1100px){#content{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:680px){
   #content{grid-template-columns:1fr}
+  .cards-grid{grid-template-columns:1fr !important}
   .page{padding:12px 10px 40px}
   .topnav{padding:0 12px}
   .sys-card-header{flex-wrap:wrap;gap:6px}
@@ -533,7 +535,7 @@ function renderAll(){
 
   document.getElementById('content').innerHTML=`
     ${doneBanner}
-    ${mainContent?`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start">${mainContent}</div>`:''}
+    ${mainContent?`<div class="cards-grid">${mainContent}</div>`:''}
 `;
 }
 
