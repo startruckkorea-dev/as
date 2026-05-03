@@ -460,7 +460,7 @@ async function boot(account){
   siteId=site.id;
   const _cfg = await loadSystemConfig();
   if (_cfg) {
-    const _contact = cfgVal(_cfg,'CONTACT_EMAIL',{email:'stk_it@hyosung.com'});
+    const _contact = cfgVal(_cfg,'APS_CONTACT',cfgVal(_cfg,'CONTACT_EMAIL',{email:'stk_it@hyosung.com'}));
     const navSub = document.querySelector('.nav-sub');
     if(navSub && navSub.textContent.includes('@')) navSub.textContent='문의: '+_contact.email;
   }
