@@ -228,6 +228,7 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f5f7f
 .btn-login:disabled{background:#cbd5e0;cursor:not-allowed;transform:none;box-shadow:none}
 #login-err{color:#e53e3e;font-size:.78rem;margin-top:10px;display:none}
 </style>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
 </head>
 <body>
 
@@ -405,6 +406,45 @@ function loading(on,txt='처리 중...'){
 }
 function fmt(s){if(!s)return'-';const d=new Date(s);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
 
+
+// ── System Config from SharePoint (system_config.xlsx) ──
+let _sysConfig = null;
+async function loadSystemConfig() {
+  if (_sysConfig) return _sysConfig;
+  try {
+    const t = await token();
+    const drivesRes = await api('/sites/' + siteId + '/drives');
+    let docDrive = (drivesRes.value || []).find(d => d.name === 'Documents' || d.name === '문서');
+    if (!docDrive && drivesRes.value && drivesRes.value.length) docDrive = drivesRes.value[0];
+    const res = await fetch(GRAPH + '/drives/' + docDrive.id + '/root:/system_config.xlsx:/content',
+      { headers: { Authorization: 'Bearer ' + t } });
+    if (!res.ok) throw new Error('system_config.xlsx not found');
+    const buf = await res.arrayBuffer();
+    const wb = XLSX.read(buf, { type: 'array' });
+    const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1 });
+    const cfg = {};
+    rows.forEach(row => {
+      const key = (row[0] || '').toString().trim();
+      if (!key || key.startsWith('[') || key === '설정 키 (KEY)' || key.startsWith('이 파일') || key.startsWith('STK Korea')) return;
+      cfg[key] = { name: (row[1] || '').toString().trim(), email: (row[2] || '').toString().trim() };
+    });
+    _sysConfig = cfg;
+    console.log('[Config] Loaded system_config.xlsx:', Object.keys(cfg).length, 'entries');
+    return cfg;
+  } catch(e) {
+    console.warn('[Config] system_config.xlsx 로드 실패, 기본값 사용:', e.message);
+    return null;
+  }
+}
+function cfgVal(cfg, key, defaultObj) {
+  if (!cfg || !cfg[key]) return defaultObj;
+  const v = cfg[key];
+  return { ...defaultObj, name: v.name || defaultObj.name, email: v.email || defaultObj.email };
+}
+function cfgEmails(cfg, keys) {
+  return keys.map(k => (cfg && cfg[k] ? cfg[k].email : '')).filter(Boolean);
+}
+
 async function boot(account){
   user=account;
   document.getElementById('login-screen').style.display='none';
@@ -418,6 +458,12 @@ async function boot(account){
   loading(true,'데이터 불러오는 중...');
   const site=await api('/sites/'+SITE_PATH);
   siteId=site.id;
+  const _cfg = await loadSystemConfig();
+  if (_cfg) {
+    const _contact = cfgVal(_cfg,'CONTACT_EMAIL',{email:'stk_it@hyosung.com'});
+    const navSub = document.querySelector('.nav-sub');
+    if(navSub && navSub.textContent.includes('@')) navSub.textContent='문의: '+_contact.email;
+  }
   loading(false);
   await loadAll();
 }
