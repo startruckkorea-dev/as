@@ -236,7 +236,7 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f5f7f
   <div class="login-card">
     <div class="login-logo">📬</div>
     <div class="login-title">STK 통합 결재함</div>
-    <div class="login-co" id="aps-contact-login">문의: stk_it@hyosung.com</div>
+    <div class="login-co" id="aps-contact-login">문의: (Excel 설정값)</div>
     <button class="btn-login" id="btn-login" disabled>로딩 중...</button>
     <div id="login-err"></div>
   </div>
@@ -249,7 +249,7 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f5f7f
       <div class="nav-icon">📬</div>
       <div>
         <div class="nav-title">STK 통합 결재함</div>
-        <div class="nav-sub" id="aps-contact-nav">문의: stk_it@hyosung.com</div>
+        <div class="nav-sub" id="aps-contact-nav">문의: (Excel 설정값)</div>
       </div>
     </div>
     <div class="nav-right">
@@ -460,7 +460,7 @@ async function boot(account){
   siteId=site.id;
   const _cfg = await loadSystemConfig();
   if (_cfg) {
-    const _contact = cfgVal(_cfg,'APS_CONTACT',cfgVal(_cfg,'CONTACT_EMAIL',{email:'stk_it@hyosung.com'}));
+    const _contact = cfgVal(_cfg,'APS_CONTACT',cfgVal(_cfg,'CONTACT_EMAIL',{email:''}));
     ['aps-contact-login','aps-contact-nav'].forEach(id=>{
       const el=document.getElementById(id);
       if(el) el.textContent='문의: '+_contact.email;
