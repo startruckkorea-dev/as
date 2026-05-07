@@ -249,7 +249,7 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f5f7f
       <div class="nav-icon">📬</div>
       <div>
         <div class="nav-title">STK 통합 결재함</div>
-        
+        <div class="nav-sub" id="aps-contact-nav"></div>
       </div>
     </div>
     <div class="nav-right">
@@ -472,7 +472,9 @@ async function boot(account){
   siteId=site.id;
   const _cfg = await loadSystemConfig();
   if (_cfg) {
-
+    const _contact = cfgVal(_cfg,'APS_CONTACT',cfgVal(_cfg,'CONTACT_EMAIL',{email:''}));
+    const _navEl = document.getElementById('aps-contact-nav');
+    if(_navEl && _contact.email) _navEl.textContent = '문의: ' + _contact.email;
   }
   loading(false);
   await loadAll();
