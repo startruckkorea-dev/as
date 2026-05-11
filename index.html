@@ -403,6 +403,12 @@ async function apiAll(path) {
   }
   return {value: items};
 }
+// ApproverEmail 인덱싱 → 서버사이드 필터로 빠르게 조회
+async function apiMyApprovals(listPath, myEmail) {
+  const encoded = encodeURIComponent(myEmail);
+  const url = listPath + "?$expand=fields&$filter=fields/ApproverEmail eq '" + encoded + "'&$top=999";
+  return apiAll(url);
+}
 async function api(path,method='GET',body=null){
   const t=await token();
   const opts={method,headers:{Authorization:'Bearer '+t,'Content-Type':'application/json'}};
@@ -497,8 +503,8 @@ async function loadAll(){
   await Promise.all(SYSTEMS.map(async sys=>{
     try{
       const [apprData,reqData]=await Promise.all([
-        apiAll('/sites/'+siteId+'/lists/'+sys.apr+'/items?$expand=fields'),
-        api('/sites/'+siteId+'/lists/'+sys.req+'/items?$expand=fields&$top=500'),
+        apiMyApprovals('/sites/'+siteId+'/lists/'+sys.apr, user.email||user.username||''),
+        api('/sites/'+siteId+'/lists/'+sys.req+'/items?$expand=fields&$top=999'),
       ]);
       const reqMap={};reqData.value.forEach(r=>{reqMap[r.id]=r.fields;});
       _allData[sys.key]={apprItems:apprData.value,reqMap};
