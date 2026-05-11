@@ -583,7 +583,7 @@ function renderAll(){
         <div class="item-right" onclick="event.stopPropagation()">
           ${stBadge(f.Status)}
           ${isPending
-            ?`<button class="btn-approve" onclick="showConfirm(${item.id},'승인',${f.RequestID},'${sys.key}')">승인</button><button class="btn-reject" onclick="showConfirm(${item.id},'반려',${f.RequestID},'${sys.key}')">반려</button>`
+            ?`<button class="btn-approve" onclick="showConfirm(${item.id},'승인',${f.RequestID},'${sys.key}','${(f.ApproverRole||'').replace(/'/g,'')}')" >승인</button><button class="btn-reject" onclick="showConfirm(${item.id},'반려',${f.RequestID},'${sys.key}','${(f.ApproverRole||'').replace(/'/g,'')}')" >반려</button>`
             :`<span class="done-label">완료</span>`}
         </div>
       </div>`;
@@ -685,18 +685,28 @@ async function showDetail(sysKey,reqId){
     const myPending=apprList.find(a=>(a.fields.ApproverEmail||'').toLowerCase()===(user.email||'').toLowerCase()&&(a.fields.Status||'').trim()==='대기');
     document.getElementById('detail-content').innerHTML=info+apprHtml+
       (myPending?`<div class="modal-action">
-        <button onclick="showConfirm(${myPending.id},'승인',${reqId},'${sysKey}')" class="btn-approve">✅ 승인</button>
-        <button onclick="showConfirm(${myPending.id},'반려',${reqId},'${sysKey}')" class="btn-reject">❌ 반려</button>
+        <button onclick="showConfirm(${myPending.id},'승인',${reqId},'${sysKey}','${(myPending.fields.ApproverRole||'').replace(/'/g,'')}')" class="btn-approve">✅ 승인</button>
+        <button onclick="showConfirm(${myPending.id},'반려',${reqId},'${sysKey}','${(myPending.fields.ApproverRole||'').replace(/'/g,'')}')" class="btn-reject">❌ 반려</button>
       </div>`:'');
   }catch(e){document.getElementById('detail-content').innerHTML=`<p style="color:#e53e3e;padding:16px">오류: ${e.message}</p>`;}
 }
 function closeDetail(){document.getElementById('detail-modal').className='';}
 
-function showConfirm(apprId,action,reqId,sysKey){
+function showConfirm(apprId,action,reqId,sysKey,apprRole=''){
   _pending={apprId,action,reqId,sysKey};
   const isReject=action==='반려';
   document.getElementById('confirm-title').textContent=isReject?'❌ 반려 확인':'✅ 승인 확인';
-  document.getElementById('confirm-sub').textContent=isReject?'반려 사유를 입력해주세요. (필수)':'이 신청을 승인하시겠습니까?';
+  // SCC 체크리스트 필요 역할 감지
+  const needChecklist = sysKey==='SCC' && !isReject &&
+    (apprRole.includes('Compliance')||apprRole.includes('Controlling')||apprRole.includes('Accounting'));
+  const sccNotice = document.getElementById('confirm-scc-notice');
+  if(needChecklist){
+    document.getElementById('confirm-sub').textContent='이 결재는 체크리스트 작성이 필요합니다. SCC 시스템에서 진행해 주세요.';
+    if(sccNotice) sccNotice.style.display='';
+  } else {
+    document.getElementById('confirm-sub').textContent=isReject?'반려 사유를 입력해주세요. (필수)':'이 신청을 승인하시겠습니까?';
+    if(sccNotice) sccNotice.style.display='none';
+  }
   const commentEl=document.getElementById('confirm-comment');
   commentEl.value='';commentEl.placeholder=isReject?'반려 사유 입력 (필수)':'의견 입력 (선택사항)';
   const okBtn=document.getElementById('confirm-ok-btn');
