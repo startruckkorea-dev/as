@@ -518,17 +518,7 @@ async function loadAll(){
 }
 
 function summary(sysKey,rf){
-  if(sysKey==='GW')  return(rf.Source||'')+' / '+(rf.GoodwillType||'');
-  if(sysKey==='BP')  return(rf.BPType||'')+' / '+(rf.SubCategory||'');
-  if(sysKey==='FA')  return(rf.FAType||'')+' / '+(rf.Title||'').substring(0,28);
-  if(sysKey==='SCC') return(rf.ContractCompanyType||'')+' / '+(rf.Title||'').substring(0,28);
-  if(sysKey==='IT')  return(rf.TicketType||'')+' / '+(rf.Title||'').substring(0,28);
-  if(sysKey==='MC')  return(rf.Department||'')+' / '+(rf.Period||'').substring(0,22);
-  if(sysKey==='RR')  return(rf.VehicleModel||'')+' / '+(rf.AccidentType||'');
-  if(sysKey==='GA_STN') return(rf.Company||'')+' / '+(rf.CostCenter||'');
-  if(sysKey==='GA_BC')  return(rf.NameEN||'')+' / '+(rf.Quantity||'')+'매';
-  if(sysKey==='GA_IDC') return(rf.IssueType||'')+' / '+(rf.CostCenter||'');
-  return'-';
+  return (rf.Title||'').substring(0,40) || '-';
 }
 
 function stBadge(st){
