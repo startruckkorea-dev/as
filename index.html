@@ -401,13 +401,13 @@ function signOut(){msalApp.logoutRedirect();}
 async function token(){
   try{return(await msalApp.acquireTokenSilent({scopes:SCOPES,account:msalApp.getActiveAccount()})).accessToken;}
   catch(e){
-    // interaction_required, login_required, consent_required, token_expired 등 모두 popup으로 fallback
+    // popup 대신 redirect 방식으로 전환 (팝업 차단 방지)
     const needsInteraction = e.name==='InteractionRequiredAuthError'
       || (e.errorCode && (e.errorCode.includes('interaction_required')||e.errorCode.includes('login_required')||e.errorCode.includes('consent_required')||e.errorCode.includes('token_expired')||e.errorCode.includes('no_tokens_found')))
       || (e.message && e.message.includes('interaction_required'));
     if(needsInteraction){
-      try{const r=await msalApp.acquireTokenPopup({scopes:SCOPES});msalApp.setActiveAccount(r.account);return r.accessToken;}
-      catch(e2){throw e2;}
+      await msalApp.acquireTokenRedirect({scopes:SCOPES});
+      return ''; // redirect 후 페이지 재로드되므로 여기 도달 안 함
     }
     throw e;
   }
