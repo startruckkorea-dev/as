@@ -400,7 +400,17 @@ function signOut(){msalApp.logoutRedirect();}
 
 async function token(){
   try{return(await msalApp.acquireTokenSilent({scopes:SCOPES,account:msalApp.getActiveAccount()})).accessToken;}
-  catch(e){if(e.name==='InteractionRequiredAuthError'||(e.errorCode&&e.errorCode.includes('interaction_required'))){const r=await msalApp.acquireTokenPopup({scopes:SCOPES});msalApp.setActiveAccount(r.account);return r.accessToken;}throw e;}
+  catch(e){
+    // interaction_required, login_required, consent_required, token_expired 등 모두 popup으로 fallback
+    const needsInteraction = e.name==='InteractionRequiredAuthError'
+      || (e.errorCode && (e.errorCode.includes('interaction_required')||e.errorCode.includes('login_required')||e.errorCode.includes('consent_required')||e.errorCode.includes('token_expired')||e.errorCode.includes('no_tokens_found')))
+      || (e.message && e.message.includes('interaction_required'));
+    if(needsInteraction){
+      try{const r=await msalApp.acquireTokenPopup({scopes:SCOPES});msalApp.setActiveAccount(r.account);return r.accessToken;}
+      catch(e2){throw e2;}
+    }
+    throw e;
+  }
 }
 
 // ── 페이지네이션 전체 조회 헬퍼 ──
@@ -489,16 +499,25 @@ async function boot(account){
   document.getElementById('user-avatar').textContent=initials;
 
   loading(true,'데이터 불러오는 중...');
-  const site=await api('/sites/'+SITE_PATH);
-  siteId=site.id;
-  const _cfg = await loadSystemConfig();
-  if (_cfg) {
-    const _contact = cfgVal(_cfg,'APS_CONTACT',cfgVal(_cfg,'CONTACT_EMAIL',{email:''}));
-    const _navEl = document.getElementById('aps-contact-nav');
-    if(_navEl && _contact.email) _navEl.textContent = '문의: ' + _contact.email;
+  try {
+    const site=await api('/sites/'+SITE_PATH);
+    siteId=site.id;
+    const _cfg = await loadSystemConfig();
+    if (_cfg) {
+      const _contact = cfgVal(_cfg,'APS_CONTACT',cfgVal(_cfg,'CONTACT_EMAIL',{email:''}));
+      const _navEl = document.getElementById('aps-contact-nav');
+      if(_navEl && _contact.email) _navEl.textContent = '문의: ' + _contact.email;
+    }
+  } catch(e) {
+    console.error('boot 초기화 오류:', e.message);
+  } finally {
+    loading(false);
   }
-  loading(false);
-  await loadAll();
+  if (siteId) await loadAll();
+  else {
+    const app = document.getElementById('app');
+    if (app) app.innerHTML += '<div style="text-align:center;padding:40px;color:#a4262c">사이트 연결 실패. 페이지를 새로고침해 주세요.<br><button onclick="location.reload()" style="margin-top:12px;padding:8px 20px;background:#0078d4;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:13px">새로고침</button></div>';
+  }
 }
 
 async function loadAll(){
